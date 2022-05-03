@@ -6,7 +6,7 @@
   "bugs": "https://github.com/yamadayuki/bs-url/issues",
   "devDependencies": {
     "@glennsl/bs-jest": "^0.7.0",
-    "bs-platform": "^9.0.2"
+    "rescript": "^9.1.4"
   },
   "homepage": "https://github.com/yamadayuki/bs-url",
   "keywords": [
@@ -23,14 +23,13 @@
   },
   "scripts": {
     "prebuild": "npm run clean",
-    "watch": "bsb -make-world -w",
-    "build": "bsb -make-world",
+    "build": "rescript",
     "clean": "bsb -clean-world",
     "release": "npm run release-patch",
     "release-major": "npm version major && git push origin master --tags && npm publish --access=public",
     "release-minor": "npm version minor && git push origin master --tags && npm publish --access=public",
     "release-patch": "npm version patch && git push origin master --tags && npm publish --access=public",
-    "start": "bsb -make-world -w",
+    "start": "rescript build -w",
     "pretest": "npm run build",
     "test": "jest"
   }
