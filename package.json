@@ -5,8 +5,8 @@
   "author": "yamadayuki",
   "bugs": "https://github.com/yamadayuki/bs-url/issues",
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.9",
-    "bs-platform": "^7.0.1"
+    "@glennsl/bs-jest": "^0.7.0",
+    "bs-platform": "^9.0.2"
   },
   "homepage": "https://github.com/yamadayuki/bs-url",
   "keywords": [
@@ -23,6 +23,7 @@
   },
   "scripts": {
     "prebuild": "npm run clean",
+    "watch": "bsb -make-world -w",
     "build": "bsb -make-world",
     "clean": "bsb -clean-world",
     "release": "npm run release-patch",

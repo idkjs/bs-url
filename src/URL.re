@@ -27,35 +27,31 @@ external makeWithBase: (string, string) => t = "URL";
 external domainToASCII: string => string = "domainToASCII";
 [@bs.module "url"] [@bs.val]
 external domainToUnicode: string => string = "domainToUnicode";
-[@bs.module "url"] [@bs.val]
-external formatInternal:
-  (
-    t,
-    {
-      .
-      "auth": bool,
-      "fragment": bool,
-      "search": bool,
-      "unicode": bool,
-    }
-  ) =>
-  string =
-  "format";
 
-let unwrapOptWithDefault = (optionalValue, default) =>
-  switch (optionalValue) {
-  | Some(v) => v
-  | None => default
-  };
+type formatInternal = {
+  auth: bool,
+  fragment: bool,
+  search: bool,
+  unicode: bool,
+};
+[@bs.module "url"] [@bs.val]
+external formatInternal: (t, formatInternal) => string = "format";
+
+let unwrapOptWithDefault: (option(bool), bool) => bool =
+  (optionalValue, default) =>
+    switch (optionalValue) {
+    | Some(v) => v
+    | None => default
+    };
 
 let format = (~auth=?, ~fragment=?, ~search=?, ~unicode=?, t) =>
   formatInternal(
     t,
     {
-      "auth": unwrapOptWithDefault(auth, true),
-      "fragment": unwrapOptWithDefault(fragment, true),
-      "search": unwrapOptWithDefault(search, true),
-      "unicode": unwrapOptWithDefault(unicode, false),
+      auth: unwrapOptWithDefault(auth, true),
+      fragment: unwrapOptWithDefault(fragment, true),
+      search: unwrapOptWithDefault(search, true),
+      unicode: unwrapOptWithDefault(unicode, false),
     },
   );
 [@bs.module "url"] [@bs.val] external parse: string => t = "parse";
