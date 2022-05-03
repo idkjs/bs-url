@@ -1,31 +1,52 @@
 type t;
+module WHATWG = {
+  type url;
+  type searchParams;
 
-[@bs.module "url"] [@bs.new] external make: string => t = "URL";
-[@bs.module "url"] [@bs.new]
-external makeWithBase: (string, string) => t = "URL";
+  type t = url;
+
+  module SearchParams = {
+    type t = searchParams;
+
+    [@send] [@return nullable]
+    external get: (t, string) => option(string) = "get";
+  };
+
+  [@new] external make: string => t = "URL";
+  [@get] external searchParams: t => searchParams = "searchParams";
+};
+// [@module "url"] [@new] external make: string => t = "URL";
+[@module "url"] [@new] external makeWithBase: (string, string) => t = "URL";
 
 /* Members */
-[@bs.get] external getHash: t => string = "hash";
-[@bs.get] external getHost: t => string = "host";
-[@bs.get] external getHostname: t => string = "hostname";
-[@bs.get] external getHref: t => string = "href";
-[@bs.get] external getOrigin: t => string = "origin";
-[@bs.get] external getPassword: t => string = "password";
-[@bs.get] external getPathname: t => string = "pathname";
-[@bs.get] external getPort: t => string = "port";
-[@bs.get] external getProtocol: t => string = "protocol";
-[@bs.get] external getSearch: t => string = "search";
-[@bs.get] external getSearchParams: t => URLSearchParams.t = "searchParams";
-[@bs.get] external getUsername: t => string = "username";
+[@get] external getHash: WHATWG.t => string = "hash";
+[@get] external getHost:WHATWG.t => string = "host";
+[@get] external getHostname: WHATWG.t => string = "hostname";
+[@get] external getHref: WHATWG.t => string = "href";
+[@get] external getOrigin: WHATWG.t => string = "origin";
+[@get] external getPassword: WHATWG.t => string = "password";
+[@get] external getPathname: WHATWG.t => string = "pathname";
+[@get] external getPort: WHATWG.t => string = "port";
+[@get] external getProtocol: WHATWG.t => string = "protocol";
+[@get] external getSearch: WHATWG.t => string = "search";
+
+// type url =
+//   | WHATWG(WHATWG.url);
+
+let getSearchParam = (url, key) =>
+  url->WHATWG.searchParams->(WHATWG.SearchParams.get(key));
+
+[@get] external getSearchParams:WHATWG.t => WHATWG.SearchParams.t = "searchParams";
+[@get] external getUsername:WHATWG.t => string = "username";
 
 /* Instance Methods */
-[@bs.send] external toString: t => string = "toString";
-[@bs.send] external toJSON: t => string = "toJSON";
+[@send] external toString: t => string = "toString";
+[@send] external toJSON: t => string = "toJSON";
 
 /* Static methods */
-[@bs.module "url"] [@bs.val]
+[@module "url"] [@val]
 external domainToASCII: string => string = "domainToASCII";
-[@bs.module "url"] [@bs.val]
+[@module "url"] [@val]
 external domainToUnicode: string => string = "domainToUnicode";
 
 type formatInternal = {
@@ -34,7 +55,7 @@ type formatInternal = {
   search: bool,
   unicode: bool,
 };
-[@bs.module "url"] [@bs.val]
+[@module "url"] [@val]
 external formatInternal: (t, formatInternal) => string = "format";
 
 let unwrapOptWithDefault: (option(bool), bool) => bool =
@@ -54,6 +75,5 @@ let format = (~auth=?, ~fragment=?, ~search=?, ~unicode=?, t) =>
       unicode: unwrapOptWithDefault(unicode, false),
     },
   );
-[@bs.module "url"] [@bs.val] external parse: string => t = "parse";
-[@bs.module "url"] [@bs.val]
-external resolve: (string, string) => t = "resolve";
+[@module "url"] [@val] external parse: string => t = "parse";
+[@module "url"] [@val] external resolve: (string, string) => t = "resolve";

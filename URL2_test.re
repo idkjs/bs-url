@@ -6,8 +6,8 @@ let () =
     describe("constructor", () => {
       describe("make", () =>
         test("create instance properly", () =>
-          expect(URL.WHATWG.make("https://example.org/"))
-          |> toBe("https://example.org/"|>Obj.magic)
+          expect(URL.make("https://example.org/") |> URL.toString)
+          |> toBe("https://example.org/")
         )
       );
 
@@ -33,7 +33,7 @@ let () =
     });
 
     describe("member variables", () => {
-      let url = URL.WHATWG.make("https://abc:xyz@example.org:8080/foo#bar");
+      let url = URL.make("https://abc:xyz@example.org:8080/foo#bar");
 
       describe("hash", () =>
         test("should return fragment portion of the URL", () =>
@@ -92,22 +92,22 @@ let () =
 
       describe("search", () =>
         test("should return serialized query portion of the URL", () => {
-          let url = URL.WHATWG.make("https://abc:xyz@example.org:8080/?foo=bar");
+          let url = URL.make("https://abc:xyz@example.org:8080/?foo=bar");
           expect(url |> URL.getSearch) |> toBe("?foo=bar");
         })
       );
 
-    //   describe("searchParams", () =>
-    //     test(
-    //       "should return object repesenting the query parameters of the URL",
-    //       () => {
-    //       let url = URL.WHATWG.make("https://abc:xyz@example.org:8080/?foo=bar");
-    //       expect(url |> URL.getSearchParams)
-    //       |> toBe(
-    //            URL.WHATWG.make("?foo=bar"|>Obj.magic) ,
-    //          );
-    //     })
-    //   );
+      describe("searchParams", () =>
+        test(
+          "should return object repesenting the query parameters of the URL",
+          () => {
+          let url = URL.make("https://abc:xyz@example.org:8080/?foo=bar");
+          expect(url |> URL.getSearchParams |> URLSearchParams.toString)
+          |> toBe(
+               URLSearchParams.make("?foo=bar") |> URLSearchParams.toString,
+             );
+        })
+      );
 
       describe("username", () =>
         test("should return username portion of the URL", () =>
@@ -116,19 +116,19 @@ let () =
       );
     });
 
-    // describe("instance methods", () => {
-      let url = URL.WHATWG.make("https://abc:xyz@example.org:8080/foo#bar");
-    //   describe("toString", () =>
-    //     test("should return the serialized URL", () =>
-    //       expect(url |> URL.toString)
-    //       |> toBe("https://abc:xyz@example.org:8080/foo#bar")
-    //     )
-    //   );
+    describe("instance methods", () => {
+      let url = URL.make("https://abc:xyz@example.org:8080/foo#bar");
+      describe("toString", () =>
+        test("should return the serialized URL", () =>
+          expect(url |> URL.toString)
+          |> toBe("https://abc:xyz@example.org:8080/foo#bar")
+        )
+      );
 
       describe("toJSON", () =>
         test("should return the serialized URL", () =>
-          expect(url )
-          |> toBe("https://abc:xyz@example.org:8080/foo#bar"|> Obj.magic)
+          expect(url |> URL.toString)
+          |> toBe("https://abc:xyz@example.org:8080/foo#bar")
         )
       );
     });
@@ -161,29 +161,69 @@ let () =
         let urlString = {js|https://a:b@你好你好?abc#foo|js};
 
         test("should return the serialized URL", () =>
-          expect(URL.WHATWG.make(urlString))
-          |> toBe("https://a:b@xn--6qqa088eba/?abc#foo"|> Obj.magic)
+          expect(
+            URL.make(urlString)
+            |> URL.format(
+                 ~unicode=false,
+                 ~fragment=false,
+                 ~search=false,
+                 ~auth=false,
+               ),
+          )
+          |> toBe("https://a:b@xn--6qqa088eba/?abc#foo")
         );
 
         test("should return the serialized URL excluding auth data", () =>
-          expect(URL.WHATWG.make(urlString))
-          |> toBe("https://xn--6qqa088eba/?abc#foo"|> Obj.magic)
+          expect(
+            URL.make(urlString)
+            |> URL.format(
+                 ~unicode=false,
+                 ~fragment=false,
+                 ~search=false,
+                 ~auth=false,
+               ),
+          )
+          |> toBe("https://xn--6qqa088eba/?abc#foo")
         );
 
         test("should return the serialized URL excluding search params", () =>
-          expect(URL.WHATWG.make(urlString))
-          |> toBe("https://a:b@xn--6qqa088eba/#foo"|> Obj.magic)
+          expect(
+            URL.make(urlString)
+            |> URL.format(
+                 ~unicode=false,
+                 ~fragment=false,
+                 ~search=false,
+                 ~auth=false,
+               ),
+          )
+          |> toBe("https://a:b@xn--6qqa088eba/#foo")
         );
 
         test("should return the serialized URL excluding fragment", () =>
-          expect(URL.WHATWG.make(urlString))
-          |> toBe("https://a:b@xn--6qqa088eba/?abc"|> Obj.magic)
+          expect(
+            URL.make(urlString)
+            |> URL.format(
+                 ~unicode=false,
+                 ~fragment=false,
+                 ~search=false,
+                 ~auth=false,
+               ),
+          )
+          |> toBe("https://a:b@xn--6qqa088eba/?abc")
         );
 
         test("should return the serialized URL with unicode", () =>
-          expect(URL.WHATWG.make(urlString))
-          |> toBe({js|https://a:b@你好你好/?abc#foo|js}|> Obj.magic)
+          expect(
+            URL.make(urlString)
+            |> URL.format(
+                 ~unicode=true,
+                 ~fragment=false,
+                 ~search=false,
+                 ~auth=false,
+               ),
+          )
+          |> toBe({js|https://a:b@你好你好/?abc#foo|js})
         );
       });
     });
-//   });
+  });
